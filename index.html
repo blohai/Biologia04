@@ -67,8 +67,6 @@
       position: relative;
       width: 800px;
       margin: auto;
-      background: url('S_Curve_4_5cm_Curvy_Bubbles_Biologia_Title.png') no-repeat top center;
-      background-size: contain;
       height: 2900px;
     }
     .bubble {
@@ -77,6 +75,24 @@
       height: 170px;
       border-radius: 50%;
       cursor: pointer;
+      background: radial-gradient(circle at 30% 30%, #fffac0, #ffdf60);
+      border: 5px solid #e0a800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    .cat {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: pink;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 60px;
+      font-size: 1rem;
+      border: 2px solid #b783a7;
     }
     .bottom-banner {
       position: fixed;
@@ -126,20 +142,24 @@
   </div>
   <main>
     <div class="bubble-container">
-      <!-- Add 12 bubbles (positions handled by JS or CSS absolute values) -->
-      <!-- These are placeholder positions -->
-      <div class="bubble" style="top:150px; left:320px;" onclick="openBubble(1)"></div>
-      <div class="bubble" style="top:380px; left:400px;" onclick="openBubble(2)"></div>
-      <div class="bubble" style="top:620px; left:330px;" onclick="openBubble(3)"></div>
-      <div class="bubble" style="top:850px; left:250px;" onclick="openBubble(4)"></div>
-      <div class="bubble" style="top:1080px; left:280px;" onclick="openBubble(5)"></div>
-      <div class="bubble" style="top:1310px; left:340px;" onclick="openBubble(6)"></div>
-      <div class="bubble" style="top:1550px; left:420px;" onclick="openBubble(7)"></div>
-      <div class="bubble" style="top:1780px; left:350px;" onclick="openBubble(8)"></div>
-      <div class="bubble" style="top:2010px; left:270px;" onclick="openBubble(9)"></div>
-      <div class="bubble" style="top:2240px; left:320px;" onclick="openBubble(10)"></div>
-      <div class="bubble" style="top:2470px; left:400px;" onclick="openBubble(11)"></div>
-      <div class="bubble" style="top:2700px; left:330px;" onclick="openBubble(12)"></div>
+      <!-- Bubbles -->
+      <div class="bubble" style="top:150px; left:320px;" onclick="openBubble(1)">1</div>
+      <div class="bubble" style="top:380px; left:400px;" onclick="openBubble(2)">2</div>
+      <div class="bubble" style="top:620px; left:330px;" onclick="openBubble(3)">3</div>
+      <div class="bubble" style="top:850px; left:250px;" onclick="openBubble(4)">4</div>
+      <div class="bubble" style="top:1080px; left:280px;" onclick="openBubble(5)">5</div>
+      <div class="bubble" style="top:1310px; left:340px;" onclick="openBubble(6)">6</div>
+      <div class="bubble" style="top:1550px; left:420px;" onclick="openBubble(7)">7</div>
+      <div class="bubble" style="top:1780px; left:350px;" onclick="openBubble(8)">8</div>
+      <div class="bubble" style="top:2010px; left:270px;" onclick="openBubble(9)">9</div>
+      <div class="bubble" style="top:2240px; left:320px;" onclick="openBubble(10)">10</div>
+      <div class="bubble" style="top:2470px; left:400px;" onclick="openBubble(11)">11</div>
+      <div class="bubble" style="top:2700px; left:330px;" onclick="openBubble(12)">12</div>
+
+      <!-- Cats -->
+      <div class="cat" style="top:150px; left:510px;">Cat</div>
+      <div class="cat" style="top:1310px; left:530px;">Cat</div>
+      <div class="cat" style="top:2470px; left:520px;">Cat</div>
     </div>
   </main>
   <div class="bottom-banner" id="bottomBanner">
