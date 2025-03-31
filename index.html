@@ -101,10 +101,9 @@
       width: 100%;
       background: #eee;
       height: 60px;
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
-      display: none;
     }
     .bottom-banner button {
       padding: 10px 20px;
@@ -124,6 +123,28 @@
       padding: 20px;
       z-index: 9;
     }
+    .page-content {
+      display: none;
+      padding: 140px 20px 80px;
+    }
+    .page-content.active {
+      display: block;
+    }
+    .match-game {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .match-card {
+      width: 45%;
+      padding: 10px;
+      background: #f0f0f0;
+      border: 2px solid #ccc;
+      text-align: center;
+      font-weight: bold;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -141,25 +162,30 @@
     <button onclick="goHome()">🏠 Home</button>
   </div>
   <main>
-    <div class="bubble-container">
-      <!-- Bubbles -->
-      <div class="bubble" style="top:150px; left:320px;" onclick="openBubble(1)">1</div>
-      <div class="bubble" style="top:380px; left:400px;" onclick="openBubble(2)">2</div>
-      <div class="bubble" style="top:620px; left:330px;" onclick="openBubble(3)">3</div>
-      <div class="bubble" style="top:850px; left:250px;" onclick="openBubble(4)">4</div>
-      <div class="bubble" style="top:1080px; left:280px;" onclick="openBubble(5)">5</div>
-      <div class="bubble" style="top:1310px; left:340px;" onclick="openBubble(6)">6</div>
-      <div class="bubble" style="top:1550px; left:420px;" onclick="openBubble(7)">7</div>
-      <div class="bubble" style="top:1780px; left:350px;" onclick="openBubble(8)">8</div>
-      <div class="bubble" style="top:2010px; left:270px;" onclick="openBubble(9)">9</div>
-      <div class="bubble" style="top:2240px; left:320px;" onclick="openBubble(10)">10</div>
-      <div class="bubble" style="top:2470px; left:400px;" onclick="openBubble(11)">11</div>
-      <div class="bubble" style="top:2700px; left:330px;" onclick="openBubble(12)">12</div>
-
-      <!-- Cats -->
-      <div class="cat" style="top:150px; left:510px;">Cat</div>
-      <div class="cat" style="top:1310px; left:530px;">Cat</div>
-      <div class="cat" style="top:2470px; left:520px;">Cat</div>
+    <div id="homepage">
+      <div class="bubble-container">
+        <div class="bubble" style="top:150px; left:320px;" onclick="openBubble(1)">1</div>
+        <div class="bubble" style="top:380px; left:400px;" onclick="openBubble(2)">2</div>
+        <div class="bubble" style="top:620px; left:330px;" onclick="openBubble(3)">3</div>
+        <div class="bubble" style="top:850px; left:250px;" onclick="openBubble(4)">4</div>
+        <div class="bubble" style="top:1080px; left:280px;" onclick="openBubble(5)">5</div>
+        <div class="bubble" style="top:1310px; left:340px;" onclick="openBubble(6)">6</div>
+        <div class="bubble" style="top:1550px; left:420px;" onclick="openBubble(7)">7</div>
+        <div class="bubble" style="top:1780px; left:350px;" onclick="openBubble(8)">8</div>
+        <div class="bubble" style="top:2010px; left:270px;" onclick="openBubble(9)">9</div>
+        <div class="bubble" style="top:2240px; left:320px;" onclick="openBubble(10)">10</div>
+        <div class="bubble" style="top:2470px; left:400px;" onclick="openBubble(11)">11</div>
+        <div class="bubble" style="top:2700px; left:330px;" onclick="openBubble(12)">12</div>
+        <div class="cat" style="top:150px; left:510px;">Cat</div>
+        <div class="cat" style="top:1310px; left:530px;">Cat</div>
+        <div class="cat" style="top:2470px; left:520px;">Cat</div>
+      </div>
+    </div>
+    <div id="bubblePage" class="page-content">
+      <h2 style="margin-bottom: 20px;">Matching Game Area</h2>
+      <div class="match-game" id="gameArea">
+        <!-- Matching cards will be injected here based on bubble -->
+      </div>
     </div>
   </main>
   <div class="bottom-banner" id="bottomBanner">
@@ -171,15 +197,34 @@
     <button onclick="toggleQuestionList()">Close</button>
   </div>
   <script>
+    const gameData = {
+      1: ["DNA", "Deoksiribonukleiinihappo", "RNA", "Ribonukleiinihappo"],
+      2: ["Soluseinä", "Kasvisolun tuki", "Mitokondrio", "Energiatuotanto"],
+      3: ["Geeni", "Perintötekijä", "Kromosomi", "DNA:n rakenne"]
+      // Add more sets per bubble ID if needed
+    };
+
     function toggleMenu() {
       document.getElementById('menu').classList.toggle('show');
     }
     function goHome() {
-      location.reload();
+      document.getElementById('homepage').style.display = 'block';
+      document.getElementById('bubblePage').classList.remove('active');
+      document.getElementById('bottomBanner').style.display = 'none';
     }
     function openBubble(id) {
-      alert('Opened Kappale ' + id);
+      document.getElementById('homepage').style.display = 'none';
+      document.getElementById('bubblePage').classList.add('active');
       document.getElementById('bottomBanner').style.display = 'flex';
+      const gameArea = document.getElementById('gameArea');
+      gameArea.innerHTML = '';
+      const terms = gameData[id] || ["Example", "Example meaning"];
+      terms.forEach((item) => {
+        const div = document.createElement('div');
+        div.className = 'match-card';
+        div.innerText = item;
+        gameArea.appendChild(div);
+      });
     }
     function toggleQuestionList() {
       const q = document.getElementById('questionList');
