@@ -1,299 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Biology Match Game</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biologia App</title>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f7fdf8;
-      color: #333;
-      max-width: 500px;
-      margin: 0 auto;
-      padding: 30px 20px;
-    }
-
-    h2 {
-      color: #58cc02;
-      text-align: center;
-      font-weight: 800;
-    }
-
-    #term {
-      font-size: 24px;
-      font-weight: bold;
-      margin: 20px 0;
-      text-align: center;
-    }
-
-    .option {
-      background-color: #fff;
-      border: 2px solid #d3eeca;
-      border-radius: 12px;
-      padding: 15px;
-      margin: 10px 0;
-      text-align: center;
-      font-size: 16px;
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      transition: 0.2s;
-    }
-
-    .option:hover {
-      background-color: #e9f9e2;
-    }
-
-    #feedback {
-      margin-top: 10px;
-      font-weight: bold;
-      text-align: center;
-    }
-
-    #score, #league, #encouragement {
-      text-align: center;
-      font-weight: 600;
-    }
-
-    #cat-gif {
-      display: block;
-      margin: 15px auto;
-      max-width: 200px;
-      border-radius: 10px;
-    }
-
-    hr {
-      margin: 30px 0;
-    }
-
-    input, select {
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; overflow-x: hidden; }
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
-      padding: 10px;
-      margin: 6px 0;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-
-    button {
-      background-color: #58cc02;
-      color: white;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 10px;
-      font-size: 15px;
-    }
-
-    button:hover {
-      background-color: #47b600;
-    }
-
-    #language-toggle {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    #toggle-cute {
+      height: 120px;
+      background: #ffcc00;
+      z-index: 10;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 10px;
-      font-size: 14px;
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #5a3808;
     }
-
-    #toggle-cute input {
-      margin-right: 8px;
+    .hamburger {
+      position: absolute;
+      right: 20px;
+      top: 45px;
+      cursor: pointer;
+      width: 30px;
+    }
+    .hamburger div {
+      height: 4px;
+      background: #333;
+      margin: 6px 0;
+    }
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.9);
+      display: none;
+      align-items: center;
+      padding: 0 20px;
+      justify-content: start;
+      gap: 20px;
+      z-index: 11;
+    }
+    .menu-overlay.show {
+      display: flex;
+    }
+    .menu-overlay button {
+      font-size: 1rem;
+      padding: 5px 10px;
+      background: #fff;
+      border: 2px solid #333;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    main {
+      padding-top: 130px;
+      background: #fff;
+    }
+    .bubble-container {
+      position: relative;
+      width: 800px;
+      margin: auto;
+      background: url('S_Curve_4_5cm_Curvy_Bubbles_Biologia_Title.png') no-repeat top center;
+      background-size: contain;
+      height: 2900px;
+    }
+    .bubble {
+      position: absolute;
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .bottom-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #eee;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      display: none;
+    }
+    .bottom-banner button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      background: #fff;
+      border: 2px solid #333;
+      cursor: pointer;
+    }
+    .question-list {
+      position: fixed;
+      top: 120px;
+      left: 0;
+      width: 100%;
+      height: calc(100% - 180px);
+      background: #fff;
+      display: none;
+      padding: 20px;
+      z-index: 9;
     }
   </style>
 </head>
 <body>
-
-  <h2 id="title">Biology Matcher</h2>
-
-  <div id="language-toggle">
-    <label for="lang-select">Language:</label>
-    <select id="lang-select" onchange="switchLanguage(this.value)">
-      <option value="en">English</option>
-      <option value="fi">Suomi</option>
-    </select>
+  <header>
+    Biologia
+    <div class="hamburger" onclick="toggleMenu()">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </header>
+  <div class="menu-overlay" id="menu">
+    <button onclick="toggleMenu()">X</button>
+    <button>🌐 Language</button>
+    <button onclick="goHome()">🏠 Home</button>
   </div>
-
-  <div id="toggle-cute">
-    <input type="checkbox" id="cuteToggle" onchange="toggleCute()" checked>
-    <label for="cuteToggle">Cute Mode</label>
+  <main>
+    <div class="bubble-container">
+      <!-- Add 12 bubbles (positions handled by JS or CSS absolute values) -->
+      <!-- These are placeholder positions -->
+      <div class="bubble" style="top:150px; left:320px;" onclick="openBubble(1)"></div>
+      <div class="bubble" style="top:380px; left:400px;" onclick="openBubble(2)"></div>
+      <div class="bubble" style="top:620px; left:330px;" onclick="openBubble(3)"></div>
+      <div class="bubble" style="top:850px; left:250px;" onclick="openBubble(4)"></div>
+      <div class="bubble" style="top:1080px; left:280px;" onclick="openBubble(5)"></div>
+      <div class="bubble" style="top:1310px; left:340px;" onclick="openBubble(6)"></div>
+      <div class="bubble" style="top:1550px; left:420px;" onclick="openBubble(7)"></div>
+      <div class="bubble" style="top:1780px; left:350px;" onclick="openBubble(8)"></div>
+      <div class="bubble" style="top:2010px; left:270px;" onclick="openBubble(9)"></div>
+      <div class="bubble" style="top:2240px; left:320px;" onclick="openBubble(10)"></div>
+      <div class="bubble" style="top:2470px; left:400px;" onclick="openBubble(11)"></div>
+      <div class="bubble" style="top:2700px; left:330px;" onclick="openBubble(12)"></div>
+    </div>
+  </main>
+  <div class="bottom-banner" id="bottomBanner">
+    <button onclick="toggleQuestionList()">Question List</button>
   </div>
-
-  <p id="score">Points: 0</p>
-  <p id="league">League: Newbie</p>
-  <p id="encouragement"></p>
-
-  <div id="term">Loading...</div>
-  <div id="options"></div>
-  <p id="feedback"></p>
-  <img id="cat-gif" src="" style="display: none;">
-
-  <hr>
-
-  <h4 id="add-title">Add New Term</h4>
-  <input type="text" id="new-term" placeholder="Term">
-  <input type="text" id="new-meaning" placeholder="Meaning">
-  <button onclick="addTerm()">Add Term</button>
-
+  <div class="question-list" id="questionList">
+    <h2>Term List for This Bubble</h2>
+    <p>(Add/remove/edit inputs will go here)</p>
+    <button onclick="toggleQuestionList()">Close</button>
+  </div>
   <script>
-    const messages = {
-      en: {
-        title: "Biology Matcher",
-        addTitle: "Add New Term",
-        placeholderTerm: "Term",
-        placeholderMeaning: "Meaning",
-        encouragements: ["Nice!", "Great job!", "You're crushing it!", "Keep going!", "Awesome!"],
-        leagues: ["Newbie", "Bronze", "Silver", "Gold"]
-      },
-      fi: {
-        title: "Biologiapeli",
-        addTitle: "Lisää uusi termi",
-        placeholderTerm: "Termi",
-        placeholderMeaning: "Merkitys",
-        encouragements: ["Hyvä!", "Mahtavaa!", "Jatka näin!", "Upea suoritus!", "Loistavaa!"],
-        leagues: ["Aloittelija", "Pronssi", "Hopea", "Kulta"]
-      }
-    };
-
-   const catGIFs = [
-  "https://i.imgur.com/fnEJ0xF.gif",
-  "https://i.imgur.com/Y8UHuWV.gif",
-  "https://i.imgur.com/uvUN3Zo.gif",
-  "https://i.imgur.com/NnhbQgE.gif"
-];
-
-
-    let language = localStorage.getItem("lang") || "en";
-    let score = Number(localStorage.getItem("bioPoints")) || 0;
-    let masteredTerms = JSON.parse(localStorage.getItem("bioMastered")) || {};
-    let cuteMode = localStorage.getItem("cuteMode") !== "off";
-    let currentTerm = "";
-
-    let terms = JSON.parse(localStorage.getItem("bioTerms")) || {
-      "Transcription": "The process of copying DNA into mRNA",
-      "Translation": "The process where ribosomes use mRNA to build proteins",
-      "Hybridization": "The crossing of two genetically different organisms"
-    };
-
-    function save() {
-      localStorage.setItem("bioPoints", score);
-      localStorage.setItem("bioTerms", JSON.stringify(terms));
-      localStorage.setItem("bioMastered", JSON.stringify(masteredTerms));
-      localStorage.setItem("lang", language);
-      localStorage.setItem("cuteMode", cuteMode ? "on" : "off");
+    function toggleMenu() {
+      document.getElementById('menu').classList.toggle('show');
     }
-
-    function switchLanguage(lang) {
-      language = lang;
-      localStorage.setItem("lang", lang);
-      document.getElementById("title").innerText = messages[lang].title;
-      document.getElementById("add-title").innerText = messages[lang].addTitle;
-      document.getElementById("new-term").placeholder = messages[lang].placeholderTerm;
-      document.getElementById("new-meaning").placeholder = messages[lang].placeholderMeaning;
-      updateScoreAndLeague();
+    function goHome() {
+      location.reload();
     }
-
-    function updateScoreAndLeague() {
-      document.getElementById("score").innerText = `${language === 'fi' ? 'Pisteet' : 'Points'}: ${score}`;
-      let masteredCount = Object.keys(masteredTerms).length;
-      let league = messages[language].leagues[
-        masteredCount >= 15 ? 3 : masteredCount >= 10 ? 2 : masteredCount >= 5 ? 1 : 0
-      ];
-      document.getElementById("league").innerText = `${language === 'fi' ? 'Liiga' : 'League'}: ${league}`;
+    function openBubble(id) {
+      alert('Opened Kappale ' + id);
+      document.getElementById('bottomBanner').style.display = 'flex';
     }
-
-    function newQuestion() {
-      const catGif = document.getElementById("cat-gif");
-      catGif.style.display = "none";
-      catGif.src = "";
-
-      let keys = Object.keys(terms);
-      currentTerm = keys[Math.floor(Math.random() * keys.length)];
-      document.getElementById("term").innerText = currentTerm;
-
-      let correct = terms[currentTerm];
-      let allMeanings = Object.values(terms);
-      let options = shuffle([correct, ...shuffle(allMeanings).slice(0, 3)]);
-
-      const optionsDiv = document.getElementById("options");
-      optionsDiv.innerHTML = "";
-      options.forEach(opt => {
-        const div = document.createElement("div");
-        div.className = "option";
-        div.innerText = opt;
-        div.onclick = () => checkAnswer(opt);
-        optionsDiv.appendChild(div);
-      });
+    function toggleQuestionList() {
+      const q = document.getElementById('questionList');
+      q.style.display = q.style.display === 'block' ? 'none' : 'block';
     }
-
-    function checkAnswer(selected) {
-      const feedback = document.getElementById("feedback");
-      const encouragement = document.getElementById("encouragement");
-      const catGif = document.getElementById("cat-gif");
-
-      if (selected === terms[currentTerm]) {
-        score++;
-        masteredTerms[currentTerm] = (masteredTerms[currentTerm] || 0) + 1;
-        feedback.innerText = messages[language].encouragements[Math.floor(Math.random() * 5)];
-        feedback.style.color = "#58cc02";
-        if (cuteMode) {
-          catGif.src = catGIFs[Math.floor(Math.random() * catGIFs.length)];
-          catGif.style.display = "block";
-        }
-      } else {
-        feedback.innerText = `${language === 'fi' ? 'Väärin!' : 'Wrong!'} ${terms[currentTerm]}`;
-        feedback.style.color = "#ff4d4d";
-        masteredTerms[currentTerm] = 0;
-      }
-
-      encouragement.innerText = "";
-      updateScoreAndLeague();
-      save();
-
-      setTimeout(() => {
-        feedback.innerText = "";
-        newQuestion();
-      }, 1500);
-    }
-
-    function addTerm() {
-      const term = document.getElementById("new-term").value.trim();
-      const meaning = document.getElementById("new-meaning").value.trim();
-      if (term && meaning) {
-        terms[term] = meaning;
-        masteredTerms[term] = 0;
-        document.getElementById("new-term").value = "";
-        document.getElementById("new-meaning").value = "";
-        save();
-        alert(language === "fi" ? "Uusi termi lisätty!" : "New term added!");
-        newQuestion();
-      }
-    }
-
-    function toggleCute() {
-      cuteMode = document.getElementById("cuteToggle").checked;
-      save();
-    }
-
-    function shuffle(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-
-    document.getElementById("lang-select").value = language;
-    document.getElementById("cuteToggle").checked = cuteMode;
-    switchLanguage(language);
-    newQuestion();
   </script>
 </body>
 </html>
