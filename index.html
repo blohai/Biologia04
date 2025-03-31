@@ -194,18 +194,18 @@
   <main>
     <div id="homepage">
       <div class="bubble-container">
-        <div class="bubble" style="top:150px; left:320px;" onclick="openBubble(1)">1</div>
-        <div class="bubble" style="top:380px; left:400px;" onclick="openBubble(2)">2</div>
-        <div class="bubble" style="top:620px; left:330px;" onclick="openBubble(3)">3</div>
-        <div class="bubble" style="top:850px; left:250px;" onclick="openBubble(4)">4</div>
-        <div class="bubble" style="top:1080px; left:280px;" onclick="openBubble(5)">5</div>
-        <div class="bubble" style="top:1310px; left:340px;" onclick="openBubble(6)">6</div>
-        <div class="bubble" style="top:1550px; left:420px;" onclick="openBubble(7)">7</div>
-        <div class="bubble" style="top:1780px; left:350px;" onclick="openBubble(8)">8</div>
-        <div class="bubble" style="top:2010px; left:270px;" onclick="openBubble(9)">9</div>
-        <div class="bubble" style="top:2240px; left:320px;" onclick="openBubble(10)">10</div>
-        <div class="bubble" style="top:2470px; left:400px;" onclick="openBubble(11)">11</div>
-        <div class="bubble" style="top:2700px; left:330px;" onclick="openBubble(12)">12</div>
+        <div class="bubble" style="top:150px; left:320px;" data-id="1">1</div>
+        <div class="bubble" style="top:380px; left:400px;" data-id="2">2</div>
+        <div class="bubble" style="top:620px; left:330px;" data-id="3">3</div>
+        <div class="bubble" style="top:850px; left:250px;" data-id="4">4</div>
+        <div class="bubble" style="top:1080px; left:280px;" data-id="5">5</div>
+        <div class="bubble" style="top:1310px; left:340px;" data-id="6">6</div>
+        <div class="bubble" style="top:1550px; left:420px;" data-id="7">7</div>
+        <div class="bubble" style="top:1780px; left:350px;" data-id="8">8</div>
+        <div class="bubble" style="top:2010px; left:270px;" data-id="9">9</div>
+        <div class="bubble" style="top:2240px; left:320px;" data-id="10">10</div>
+        <div class="bubble" style="top:2470px; left:400px;" data-id="11">11</div>
+        <div class="bubble" style="top:2700px; left:330px;" data-id="12">12</div>
         <div class="cat" style="top:150px; left:510px;">Cat</div>
         <div class="cat" style="top:1310px; left:530px;">Cat</div>
         <div class="cat" style="top:2470px; left:520px;">Cat</div>
@@ -227,8 +227,8 @@
     <ul id="termList"></ul>
     <button onclick="toggleQuestionList()">Close</button>
   </div>
-  <script>
-document.addEventListener("DOMContentLoaded", function () {
+  <script defer>
+
   
 let currentBubbleId = 1;
 const gameData = {
@@ -313,13 +313,19 @@ function loadGame(id) {
   usedDefs.forEach((def) => {
     const btn = document.createElement('div');
     btn.className = 'match-card';
+    btn.setAttribute('data-clickable', 'true');
     btn.innerText = def;
-    btn.onclick = () => handleDefinitionClick(btn, def, correctAnswer);
+    btn.onclick = () => {
+      if (btn.getAttribute('data-clickable') !== 'true') return;
+      document.querySelectorAll('.match-card').forEach(card => card.setAttribute('data-clickable', 'false'));
+      handleDefinitionClick(btn, def, correctAnswer);
+    };
     gameArea.appendChild(btn);
   });
 }
 function handleDefinitionClick(card, chosen, correct) {
   const nextBtn = document.createElement('button');
+  nextBtn.id = 'nextBtn';
   nextBtn.innerText = 'Seuraava';
   nextBtn.style.marginTop = '20px';
   nextBtn.style.padding = '10px 20px';
@@ -347,11 +353,20 @@ function showCatFeedback() {
   }, 1500);
 }
 
-  // ✅ Expose interactive functions to global scope after they are defined
-  window.openBubble = openBubble;
-  window.toggleMenu = toggleMenu;
-});
+// ✅ Expose interactive functions AFTER they are defined:
+window.openBubble = openBubble;
+window.toggleMenu = toggleMenu;
 
+  // ✅ Expose interactive functions to global scope after they are defined
+  
+
+
+document.querySelectorAll('.bubble').forEach(bubble => {
+  bubble.addEventListener('click', () => {
+    const id = parseInt(bubble.dataset.id);
+    openBubble(id);
+  });
+});
 </script>
   <img id="catFeedback" src="https://media.tenor.com/wo5LZ8U6bS8AAAAi/mochi-peachcat-dance.gif" style="position: fixed; bottom: 80px; right: 20px; width: 100px; display: none; z-index: 999;" />
 </body>
