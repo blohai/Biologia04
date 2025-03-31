@@ -228,6 +228,8 @@
     <button onclick="toggleQuestionList()">Close</button>
   </div>
   <script>
+document.addEventListener("DOMContentLoaded", function () {
+  
 let currentBubbleId = 1;
 const gameData = {
   1: ["DNA", "Deoksiribonukleiinihappo", "RNA", "Ribonukleiinihappo"],
@@ -344,6 +346,12 @@ function showCatFeedback() {
     cat.style.display = 'none';
   }, 1500);
 }
+
+  // ✅ Expose interactive functions to global scope after they are defined
+  window.openBubble = openBubble;
+  window.toggleMenu = toggleMenu;
+});
+
 </script>
   <img id="catFeedback" src="https://media.tenor.com/wo5LZ8U6bS8AAAAi/mochi-peachcat-dance.gif" style="position: fixed; bottom: 80px; right: 20px; width: 100px; display: none; z-index: 999;" />
 </body>
