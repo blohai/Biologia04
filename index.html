@@ -138,12 +138,23 @@
     }
     .match-card {
       width: 45%;
-      padding: 10px;
-      background: #f0f0f0;
-      border: 2px solid #ccc;
+      padding: 15px;
+      background: #ffeaa7;
+      border: 3px solid #fdcb6e;
       text-align: center;
       font-weight: bold;
       cursor: pointer;
+      border-radius: 10px;
+      transition: background 0.3s ease;
+    }
+    .match-card.matched {
+      background: #55efc4;
+      border-color: #00b894;
+      color: #2d3436;
+    }
+    .question-list input, .question-list button {
+      margin: 10px 5px;
+      padding: 8px;
     }
   </style>
 </head>
@@ -183,9 +194,7 @@
     </div>
     <div id="bubblePage" class="page-content">
       <h2 style="margin-bottom: 20px;">Matching Game Area</h2>
-      <div class="match-game" id="gameArea">
-        <!-- Matching cards will be injected here based on bubble -->
-      </div>
+      <div class="match-game" id="gameArea"></div>
     </div>
   </main>
   <div class="bottom-banner" id="bottomBanner">
@@ -193,15 +202,18 @@
   </div>
   <div class="question-list" id="questionList">
     <h2>Term List for This Bubble</h2>
-    <p>(Add/remove/edit inputs will go here)</p>
+    <input type="text" id="termInput" placeholder="Term">
+    <input type="text" id="definitionInput" placeholder="Definition">
+    <button onclick="addTerm()">Add</button>
+    <ul id="termList"></ul>
     <button onclick="toggleQuestionList()">Close</button>
   </div>
   <script>
+    let currentBubbleId = 1;
     const gameData = {
       1: ["DNA", "Deoksiribonukleiinihappo", "RNA", "Ribonukleiinihappo"],
       2: ["Soluseinä", "Kasvisolun tuki", "Mitokondrio", "Energiatuotanto"],
       3: ["Geeni", "Perintötekijä", "Kromosomi", "DNA:n rakenne"]
-      // Add more sets per bubble ID if needed
     };
 
     function toggleMenu() {
@@ -213,22 +225,75 @@
       document.getElementById('bottomBanner').style.display = 'none';
     }
     function openBubble(id) {
+      currentBubbleId = id;
       document.getElementById('homepage').style.display = 'none';
       document.getElementById('bubblePage').classList.add('active');
       document.getElementById('bottomBanner').style.display = 'flex';
-      const gameArea = document.getElementById('gameArea');
-      gameArea.innerHTML = '';
-      const terms = gameData[id] || ["Example", "Example meaning"];
-      terms.forEach((item) => {
-        const div = document.createElement('div');
-        div.className = 'match-card';
-        div.innerText = item;
-        gameArea.appendChild(div);
-      });
+      loadGame(id);
+      renderList(id);
     }
     function toggleQuestionList() {
       const q = document.getElementById('questionList');
       q.style.display = q.style.display === 'block' ? 'none' : 'block';
+    }
+    function addTerm() {
+      const term = document.getElementById('termInput').value.trim();
+      const def = document.getElementById('definitionInput').value.trim();
+      if (term && def) {
+        if (!gameData[currentBubbleId]) gameData[currentBubbleId] = [];
+        gameData[currentBubbleId].push(term, def);
+        renderList(currentBubbleId);
+        loadGame(currentBubbleId);
+        document.getElementById('termInput').value = '';
+        document.getElementById('definitionInput').value = '';
+      }
+    }
+    function renderList(id) {
+      const list = document.getElementById('termList');
+      list.innerHTML = '';
+      const terms = gameData[id] || [];
+      for (let i = 0; i < terms.length; i += 2) {
+        const li = document.createElement('li');
+        li.textContent = `${terms[i]} - ${terms[i+1]}`;
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = 'Remove';
+        removeBtn.onclick = () => {
+          terms.splice(i, 2);
+          renderList(id);
+          loadGame(id);
+        };
+        li.appendChild(removeBtn);
+        list.appendChild(li);
+      }
+    }
+    function loadGame(id) {
+      const gameArea = document.getElementById('gameArea');
+      gameArea.innerHTML = '';
+      const terms = gameData[id] || [];
+      const shuffled = [...terms];
+      shuffled.sort(() => Math.random() - 0.5);
+      shuffled.forEach((item) => {
+        const div = document.createElement('div');
+        div.className = 'match-card';
+        div.innerText = item;
+        div.onclick = () => handleCardClick(div, item);
+        gameArea.appendChild(div);
+      });
+    }
+    let selectedCard = null;
+    function handleCardClick(card, text) {
+      if (!selectedCard) {
+        selectedCard = { card, text };
+        card.style.background = '#ffeaa7';
+      } else {
+        const terms = gameData[currentBubbleId];
+        const matchIndex = terms.indexOf(selectedCard.text);
+        if (matchIndex !== -1 && terms[matchIndex ^ 1] === text) {
+          selectedCard.card.classList.add('matched');
+          card.classList.add('matched');
+        }
+        selectedCard = null;
+      }
     }
   </script>
 </body>
