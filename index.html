@@ -228,70 +228,69 @@
     <button onclick="toggleQuestionList()">Close</button>
   </div>
   <script>
-    let currentBubbleId = 1;
-    const gameData = {
-      1: ["DNA", "Deoksiribonukleiinihappo", "RNA", "Ribonukleiinihappo"],
-      2: ["Soluseinä", "Kasvisolun tuki", "Mitokondrio", "Energiatuotanto"],
-      3: ["Geeni", "Perintötekijä", "Kromosomi", "DNA:n rakenne"]
-    };
+let currentBubbleId = 1;
+const gameData = {
+  1: ["DNA", "Deoksiribonukleiinihappo", "RNA", "Ribonukleiinihappo"],
+  2: ["Soluseinä", "Kasvisolun tuki", "Mitokondrio", "Energiatuotanto"],
+  3: ["Geeni", "Perintötekijä", "Kromosomi", "DNA:n rakenne"]
+};
 
-    function toggleMenu() {
-      document.getElementById('menu').classList.toggle('show');
-    }
-    function goHome() {
-      document.getElementById('homepage').style.display = 'block';
-      document.getElementById('bubblePage').classList.remove('active');
-      document.getElementById('bottomBanner').style.display = 'none';
-    }
-    function openBubble(id) {
-      currentBubbleId = id;
-      document.getElementById('homepage').style.display = 'none';
-      document.getElementById('bubblePage').classList.add('active');
-      document.getElementById('bottomBanner').style.display = 'flex';
-      loadGame(id);
+function toggleMenu() {
+  document.getElementById('menu').classList.toggle('show');
+}
+function goHome() {
+  document.getElementById('homepage').style.display = 'block';
+  document.getElementById('bubblePage').classList.remove('active');
+  document.getElementById('bottomBanner').style.display = 'none';
+}
+function openBubble(id) {
+  currentBubbleId = id;
+  document.getElementById('homepage').style.display = 'none';
+  document.getElementById('bubblePage').classList.add('active');
+  document.getElementById('bottomBanner').style.display = 'flex';
+  loadGame(id);
+  renderList(id);
+}
+function toggleQuestionList() {
+  const q = document.getElementById('questionList');
+  q.style.display = q.style.display === 'block' ? 'none' : 'block';
+}
+function addTerm() {
+  const term = document.getElementById('termInput').value.trim();
+  const def = document.getElementById('definitionInput').value.trim();
+  if (term && def) {
+    if (!gameData[currentBubbleId]) gameData[currentBubbleId] = [];
+    gameData[currentBubbleId].push(term, def);
+    renderList(currentBubbleId);
+    loadGame(currentBubbleId);
+    document.getElementById('termInput').value = '';
+    document.getElementById('definitionInput').value = '';
+  }
+}
+function renderList(id) {
+  const list = document.getElementById('termList');
+  list.innerHTML = '';
+  const terms = gameData[id] || [];
+  for (let i = 0; i < terms.length; i += 2) {
+    const li = document.createElement('li');
+    li.textContent = `${terms[i]} - ${terms[i+1]}`;
+    const removeBtn = document.createElement('button');
+    removeBtn.textContent = 'Remove';
+    removeBtn.onclick = () => {
+      terms.splice(i, 2);
       renderList(id);
-    }
-    function toggleQuestionList() {
-      const q = document.getElementById('questionList');
-      q.style.display = q.style.display === 'block' ? 'none' : 'block';
-    }
-    function addTerm() {
-      const term = document.getElementById('termInput').value.trim();
-      const def = document.getElementById('definitionInput').value.trim();
-      if (term && def) {
-        if (!gameData[currentBubbleId]) gameData[currentBubbleId] = [];
-        gameData[currentBubbleId].push(term, def);
-        renderList(currentBubbleId);
-        loadGame(currentBubbleId);
-        document.getElementById('termInput').value = '';
-        document.getElementById('definitionInput').value = '';
-      }
-    }
-    function renderList(id) {
-      const list = document.getElementById('termList');
-      list.innerHTML = '';
-      const terms = gameData[id] || [];
-      for (let i = 0; i < terms.length; i += 2) {
-        const li = document.createElement('li');
-        li.textContent = `${terms[i]} - ${terms[i+1]}`;
-        const removeBtn = document.createElement('button');
-        removeBtn.textContent = 'Remove';
-        removeBtn.onclick = () => {
-          terms.splice(i, 2);
-          renderList(id);
-          loadGame(id);
-        };
-        li.appendChild(removeBtn);
-        list.appendChild(li);
-      }
-    }
-    function loadGame(id) {
+      loadGame(id);
+    };
+    li.appendChild(removeBtn);
+    list.appendChild(li);
+  }
+}
+function loadGame(id) {
   const gameArea = document.getElementById('gameArea');
   gameArea.innerHTML = '';
   const terms = gameData[id] || [];
   if (terms.length < 2) return;
 
-  // Pick a random term-definition pair
   const pairIndex = Math.floor(Math.random() * (terms.length / 2)) * 2;
   const question = terms[pairIndex];
   const correctAnswer = terms[pairIndex + 1];
@@ -316,10 +315,8 @@
     btn.onclick = () => handleDefinitionClick(btn, def, correctAnswer);
     gameArea.appendChild(btn);
   });
-});
-    }
-    let selectedCard = null;
-    function handleDefinitionClick(card, chosen, correct) {
+}
+function handleDefinitionClick(card, chosen, correct) {
   const nextBtn = document.createElement('button');
   nextBtn.innerText = 'Seuraava';
   nextBtn.style.marginTop = '20px';
@@ -339,63 +336,14 @@
     card.classList.add('wrong');
     setTimeout(() => card.classList.remove('wrong'), 500);
   }
-} else {
-    card.classList.add('wrong');
-    setTimeout(() => card.classList.remove('wrong'), 500);
-  }
-};
-        card.classList.add('selected');
-      } else {
-        const terms = gameData[currentBubbleId];
-        const matchIndex = terms.indexOf(selectedCard.text);
-        if (matchIndex !== -1 && terms[matchIndex ^ 1] === text) {
-          selectedCard.card.classList.add('matched');
-          card.classList.add('matched');
-          selectedCard.card.classList.remove('selected');
-          alert('Hyvä! Oikea pari 🎉');
-        } else {
-          selectedCard.card.classList.add('wrong');
-          card.classList.add('wrong');
-          setTimeout(() => {
-            selectedCard.card.classList.remove('wrong', 'selected');
-            card.classList.remove('wrong');
-          }, 500);
-        }
-        selectedCard = null;
-      }
-    }
-      function showCatFeedback() {
-      const cat = document.getElementById('catFeedback');
-      cat.style.display = 'block';
-      setTimeout(() => {
-        cat.style.display = 'none';
-      }, 1500);
-    }
-
-    function handleCardClick(card, text) {
-      if (!selectedCard) {
-        selectedCard = { card, text };
-        card.classList.add('selected');
-      } else {
-        const terms = gameData[currentBubbleId];
-        const matchIndex = terms.indexOf(selectedCard.text);
-        if (matchIndex !== -1 && terms[matchIndex ^ 1] === text) {
-          selectedCard.card.classList.add('matched');
-          card.classList.add('matched');
-          selectedCard.card.classList.remove('selected');
-          alert('Hyvä! Oikea pari 🎉');
-          showCatFeedback();
-        } else {
-          selectedCard.card.classList.add('wrong');
-          card.classList.add('wrong');
-          setTimeout(() => {
-            selectedCard.card.classList.remove('wrong', 'selected');
-            card.classList.remove('wrong');
-          }, 500);
-        }
-        selectedCard = null;
-      }
-    }
+}
+function showCatFeedback() {
+  const cat = document.getElementById('catFeedback');
+  cat.style.display = 'block';
+  setTimeout(() => {
+    cat.style.display = 'none';
+  }, 1500);
+}
 </script>
   <img id="catFeedback" src="https://media.tenor.com/wo5LZ8U6bS8AAAAi/mochi-peachcat-dance.gif" style="position: fixed; bottom: 80px; right: 20px; width: 100px; display: none; z-index: 999;" />
 </body>
