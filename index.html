@@ -178,6 +178,14 @@
   </style>
 </head>
 <body>
+<header>
+  Biologia
+  <div class="hamburger" onclick="toggleMenu()">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+</header>
 <div class="menu-overlay" id="menu">
     <button onclick="toggleMenu()">X</button>
     <button>🌐 Language</button>
@@ -278,23 +286,64 @@
       }
     }
     function loadGame(id) {
-      const gameArea = document.getElementById('gameArea');
-      gameArea.innerHTML = '';
-      const terms = gameData[id] || [];
-      const shuffled = [...terms];
-      shuffled.sort(() => Math.random() - 0.5);
-      shuffled.forEach((item) => {
-        const div = document.createElement('div');
-        div.className = 'match-card';
-        div.innerText = item;
-        div.onclick = () => handleCardClick(div, item);
-        gameArea.appendChild(div);
-      });
+  const gameArea = document.getElementById('gameArea');
+  gameArea.innerHTML = '';
+  const terms = gameData[id] || [];
+  if (terms.length < 2) return;
+
+  // Pick a random term-definition pair
+  const pairIndex = Math.floor(Math.random() * (terms.length / 2)) * 2;
+  const question = terms[pairIndex];
+  const correctAnswer = terms[pairIndex + 1];
+
+  const usedDefs = [correctAnswer];
+  while (usedDefs.length < 4) {
+    const i = Math.floor(Math.random() * (terms.length / 2)) * 2 + 1;
+    const def = terms[i];
+    if (!usedDefs.includes(def)) usedDefs.push(def);
+  }
+
+  usedDefs.sort(() => Math.random() - 0.5);
+
+  const questionElement = document.createElement('h3');
+  questionElement.innerText = `Mikä on "${question}"?`;
+  gameArea.appendChild(questionElement);
+
+  usedDefs.forEach((def) => {
+    const btn = document.createElement('div');
+    btn.className = 'match-card';
+    btn.innerText = def;
+    btn.onclick = () => handleDefinitionClick(btn, def, correctAnswer);
+    gameArea.appendChild(btn);
+  });
+});
     }
     let selectedCard = null;
-    function handleCardClick(card, text) {
-      if (!selectedCard) {
-        selectedCard = { card, text };
+    function handleDefinitionClick(card, chosen, correct) {
+  const nextBtn = document.createElement('button');
+  nextBtn.innerText = 'Seuraava';
+  nextBtn.style.marginTop = '20px';
+  nextBtn.style.padding = '10px 20px';
+  nextBtn.style.fontSize = '1rem';
+  nextBtn.onclick = () => loadGame(currentBubbleId);
+
+  if (chosen === correct) {
+    card.classList.add('matched');
+    showCatFeedback();
+    const gameArea = document.getElementById('gameArea');
+    if (!document.getElementById('nextBtn')) {
+      nextBtn.id = 'nextBtn';
+      gameArea.appendChild(nextBtn);
+    }
+  } else {
+    card.classList.add('wrong');
+    setTimeout(() => card.classList.remove('wrong'), 500);
+  }
+} else {
+    card.classList.add('wrong');
+    setTimeout(() => card.classList.remove('wrong'), 500);
+  }
+};
         card.classList.add('selected');
       } else {
         const terms = gameData[currentBubbleId];
@@ -315,6 +364,39 @@
         selectedCard = null;
       }
     }
-  </script>
+      function showCatFeedback() {
+      const cat = document.getElementById('catFeedback');
+      cat.style.display = 'block';
+      setTimeout(() => {
+        cat.style.display = 'none';
+      }, 1500);
+    }
+
+    function handleCardClick(card, text) {
+      if (!selectedCard) {
+        selectedCard = { card, text };
+        card.classList.add('selected');
+      } else {
+        const terms = gameData[currentBubbleId];
+        const matchIndex = terms.indexOf(selectedCard.text);
+        if (matchIndex !== -1 && terms[matchIndex ^ 1] === text) {
+          selectedCard.card.classList.add('matched');
+          card.classList.add('matched');
+          selectedCard.card.classList.remove('selected');
+          alert('Hyvä! Oikea pari 🎉');
+          showCatFeedback();
+        } else {
+          selectedCard.card.classList.add('wrong');
+          card.classList.add('wrong');
+          setTimeout(() => {
+            selectedCard.card.classList.remove('wrong', 'selected');
+            card.classList.remove('wrong');
+          }, 500);
+        }
+        selectedCard = null;
+      }
+    }
+</script>
+  <img id="catFeedback" src="https://media.tenor.com/wo5LZ8U6bS8AAAAi/mochi-peachcat-dance.gif" style="position: fixed; bottom: 80px; right: 20px; width: 100px; display: none; z-index: 999;" />
 </body>
 </html>
