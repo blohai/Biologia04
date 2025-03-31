@@ -145,12 +145,31 @@
       font-weight: bold;
       cursor: pointer;
       border-radius: 10px;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .match-card:hover {
+      transform: scale(1.03);
+    }
+    .match-card.selected {
+      background: #fab1a0;
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
     .match-card.matched {
       background: #55efc4;
       border-color: #00b894;
       color: #2d3436;
+    }
+    .match-card.wrong {
+      background: #ff7675 !important;
+      animation: shake 0.3s;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
     }
     .question-list input, .question-list button {
       margin: 10px 5px;
@@ -159,15 +178,7 @@
   </style>
 </head>
 <body>
-  <header>
-    Biologia
-    <div class="hamburger" onclick="toggleMenu()">
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-  </header>
-  <div class="menu-overlay" id="menu">
+<div class="menu-overlay" id="menu">
     <button onclick="toggleMenu()">X</button>
     <button>🌐 Language</button>
     <button onclick="goHome()">🏠 Home</button>
@@ -284,13 +295,22 @@
     function handleCardClick(card, text) {
       if (!selectedCard) {
         selectedCard = { card, text };
-        card.style.background = '#ffeaa7';
+        card.classList.add('selected');
       } else {
         const terms = gameData[currentBubbleId];
         const matchIndex = terms.indexOf(selectedCard.text);
         if (matchIndex !== -1 && terms[matchIndex ^ 1] === text) {
           selectedCard.card.classList.add('matched');
           card.classList.add('matched');
+          selectedCard.card.classList.remove('selected');
+          alert('Hyvä! Oikea pari 🎉');
+        } else {
+          selectedCard.card.classList.add('wrong');
+          card.classList.add('wrong');
+          setTimeout(() => {
+            selectedCard.card.classList.remove('wrong', 'selected');
+            card.classList.remove('wrong');
+          }, 500);
         }
         selectedCard = null;
       }
