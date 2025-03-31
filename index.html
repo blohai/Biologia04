@@ -228,7 +228,6 @@
     <button onclick="toggleQuestionList()">Close</button>
   </div>
   <script defer>
-
   
 let currentBubbleId = 1;
 const gameData = {
@@ -291,7 +290,12 @@ function loadGame(id) {
   const gameArea = document.getElementById('gameArea');
   gameArea.innerHTML = '';
   const terms = gameData[id] || [];
-  if (terms.length < 2) return;
+  if (terms.length < 2) {
+    const msg = document.createElement('p');
+    msg.innerText = "No game data available for this bubble. Please add term-definition pairs.";
+    gameArea.appendChild(msg);
+    return;
+  }
 
   const pairIndex = Math.floor(Math.random() * (terms.length / 2)) * 2;
   const question = terms[pairIndex];
@@ -337,7 +341,6 @@ function handleDefinitionClick(card, chosen, correct) {
     showCatFeedback();
     const gameArea = document.getElementById('gameArea');
     if (!document.getElementById('nextBtn')) {
-      nextBtn.id = 'nextBtn';
       gameArea.appendChild(nextBtn);
     }
   } else {
@@ -353,21 +356,20 @@ function showCatFeedback() {
   }, 1500);
 }
 
-// ✅ Expose interactive functions AFTER they are defined:
 window.openBubble = openBubble;
 window.toggleMenu = toggleMenu;
 
-  // ✅ Expose interactive functions to global scope after they are defined
-  
-
-
-document.querySelectorAll('.bubble').forEach(bubble => {
-  bubble.addEventListener('click', () => {
-    const id = parseInt(bubble.dataset.id);
-    openBubble(id);
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll('.bubble').forEach(bubble => {
+    bubble.addEventListener('click', () => {
+      const id = parseInt(bubble.dataset.id);
+      openBubble(id);
+    });
   });
+
+  document.querySelector('.hamburger').addEventListener('click', toggleMenu);
 });
-</script>
+  </script>
   <img id="catFeedback" src="https://media.tenor.com/wo5LZ8U6bS8AAAAi/mochi-peachcat-dance.gif" style="position: fixed; bottom: 80px; right: 20px; width: 100px; display: none; z-index: 999;" />
 </body>
 </html>
